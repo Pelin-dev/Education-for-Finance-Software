@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinansAkademi — Profesyonel Yatırım Eğitimi</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0d0d;
+    --paper: #f8f5ef;
+    --cream: #ede9e0;
+    --gold: #c9a84c;
+    --gold-light: #e8c96a;
+    --green: #1a7a4a;
+    --red: #c0392b;
+    --muted: #6b6457;
+    --border: #d4ceC4;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.5;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    border-bottom: 1px solid var(--border);
+    background: var(--paper);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+    align-items: center;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--ink); }
+
+  .nav-cta {
+    background: var(--ink);
+    color: var(--paper) !important;
+    padding: 10px 22px;
+    border-radius: 2px;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px;
+    transition: background 0.2s !important;
+  }
+
+  .nav-cta:hover { background: var(--gold) !important; color: var(--ink) !important; }
+
+  /* HERO */
+  .hero {
+    padding: 80px 48px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 6px 14px;
+    border-radius: 2px;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(42px, 5vw, 64px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+    max-width: 440px;
+    margin-bottom: 36px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 14px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .btn-primary:hover { background: var(--gold); color: var(--ink); transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 14px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-ghost:hover { border-color: var(--ink); color: var(--ink); }
+
+  .hero-stats {
+    display: flex;
+    gap: 0;
+    margin-top: 48px;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+  }
+
+  .stat {
+    flex: 1;
+    padding-right: 24px;
+    border-right: 1px solid var(--border);
+    margin-right: 24px;
+  }
+
+  .stat:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label { font-size: 12px; color: var(--muted); font-weight: 400; }
+
+  /* HERO VISUAL */
+  .hero-visual {
+    position: relative;
+  }
+
+  .market-card {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 8px;
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+
+  .market-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .market-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    opacity: 0.6;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .market-date {
+    font-size: 12px;
+    opacity: 0.4;
+  }
+
+  .market-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .market-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .market-item:last-child { border-bottom: none; }
+
+  .market-name { font-size: 13px; font-weight: 500; }
+  .market-price { font-size: 15px; font-weight: 600; font-family: 'Playfair Display', serif; }
+
+  .market-change {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  .up { color: #4ade80; background: rgba(74,222,128,0.12); }
+  .down { color: #f87171; background: rgba(248,113,113,0.12); }
+
+  .mini-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .mini-card {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px;
+  }
+
+  .mini-card-label { font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .mini-card-value { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--ink); }
+  .mini-card-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* SECTION COMMON */
+  section { max-width: 1300px; margin: 0 auto; padding: 80px 48px; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+  }
+
+  .section-sub {
+    font-size: 16px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.6;
+    max-width: 520px;
+    margin-bottom: 48px;
+  }
+
+  /* CATEGORY TABS */
+  .category-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .category-bar::-webkit-scrollbar { display: none; }
+
+  .cat-tab {
+    padding: 14px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cat-tab:hover { color: var(--ink); }
+
+  .cat-tab.active {
+    color: var(--ink);
+    border-bottom-color: var(--gold);
+    font-weight: 600;
+  }
+
+  .cat-count {
+    font-size: 11px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1px 7px;
+    color: var(--muted);
+  }
+
+  .cat-tab.active .cat-count {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--ink);
+  }
+
+  /* VIDEO GRID */
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 28px;
+  }
+
+  .video-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    animation: fadeInUp 0.4s ease both;
+  }
+
+  .video-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    border-color: var(--gold);
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .video-thumb {
+    aspect-ratio: 16/9;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .thumb-bg {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+  }
+
+  .play-btn {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .video-card:hover .play-btn { opacity: 1; }
+
+  .play-circle {
+    width: 56px;
+    height: 56px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink);
+    font-size: 20px;
+    padding-left: 4px;
+  }
+
+  .video-duration {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.75);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 7px;
+    border-radius: 3px;
+    letter-spacing: 0.3px;
+  }
+
+  .video-level {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .level-beginner { background: #d4edda; color: #155724; }
+  .level-intermediate { background: #fff3cd; color: #856404; }
+  .level-advanced { background: #f8d7da; color: #721c24; }
+
+  .video-body {
+    padding: 20px;
+  }
+
+  .video-category {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .video-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+
+  .video-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 300;
+    margin-bottom: 16px;
+  }
+
+  .video-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+    border-top: 1px solid var(--cream);
+  }
+
+  .instructor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .instructor-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+  }
+
+  .instructor-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .video-views {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* FEATURED */
+  .featured-card {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 8px;
+    padding: 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 32px;
+    align-items: center;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .featured-card::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.08;
+  }
+
+  .featured-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 4px 10px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-bottom: 16px;
+  }
+
+  .featured-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .featured-desc {
+    font-size: 14px;
+    opacity: 0.6;
+    font-weight: 300;
+    line-height: 1.6;
+    max-width: 480px;
+    margin-bottom: 24px;
+  }
+
+  .featured-cta {
+    background: var(--gold);
+    color: var(--ink);
+    border: none;
+    padding: 12px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s;
+  }
+
+  .featured-cta:hover { opacity: 0.85; }
+
+  .featured-thumb {
+    width: 180px;
+    height: 120px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 56px;
+    flex-shrink: 0;
+  }
+
+  /* PROGRESS BAR */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+  }
+
+  .progress-label { font-size: 12px; opacity: 0.5; white-space: nowrap; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--paper);
+    border-radius: 8px;
+    width: 90%;
+    max-width: 760px;
+    overflow: hidden;
+    animation: modalIn 0.25s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .modal-video {
+    aspect-ratio: 16/9;
+    background: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    position: relative;
+  }
+
+  .modal-play-btn {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .modal-play-circle {
+    width: 72px;
+    height: 72px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    padding-left: 5px;
+  }
+
+  .modal-play-circle:hover { transform: scale(1.1); }
+
+  .modal-play-label {
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .modal-body { padding: 28px 32px; }
+
+  .modal-cat {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+
+  .modal-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+    margin-bottom: 20px;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+
+  .modal-close:hover { background: rgba(255,255,255,0.2); }
+
+  /* SEARCH */
+  .search-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 36px;
+    max-width: 500px;
+  }
+
+  .search-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    background: white;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-input:focus { border-color: var(--gold); }
+  .search-input::placeholder { color: #bbb; }
+
+  .search-btn {
+    padding: 12px 20px;
+    background: var(--ink);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+  }
+
+  .search-btn:hover { background: var(--gold); color: var(--ink); }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0 48px;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 60px 48px 40px;
+    margin-top: 80px;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+    max-width: 1300px;
+    margin: 0 auto 48px;
+  }
+
+  .footer-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 900;
+    margin-bottom: 14px;
+  }
+
+  .footer-tagline {
+    font-size: 14px;
+    opacity: 0.4;
+    font-weight: 300;
+    line-height: 1.7;
+    max-width: 260px;
+  }
+
+  .footer-col-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+  .footer-links a {
+    text-decoration: none;
+    font-size: 14px;
+    color: rgba(248,245,239,0.5);
+    transition: color 0.2s;
+    font-weight: 300;
+  }
+
+  .footer-links a:hover { color: var(--paper); }
+
+  .footer-bottom {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-copy { font-size: 12px; opacity: 0.3; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; padding: 48px 24px; }
+    .hero-visual { display: none; }
+    section { padding: 48px 24px; }
+    .featured-card { grid-template-columns: 1fr; }
+    .featured-thumb { display: none; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .divider { margin: 0 24px; }
+  }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon">₺</div>
+    FinansAkademi
+  </div>
+  <ul class="nav-links">
+    <li><a href="#">Kurslar</a></li>
+    <li><a href="#">Portfolyo</a></li>
+    <li><a href="#">Araçlar</a></li>
+    <li><a href="#">Blog</a></li>
+    <li><a href="#" class="nav-cta">Ücretsiz Başla</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-label">🎓 Profesyonel Finans Eğitimi</div>
+    <h1>Paranızı <em>Akıllıca</em> Yönetin</h1>
+    <p class="hero-sub">Portfolyo yönetiminden teknik analize, kripto varlıklardan emeklilik planlamasına kadar kapsamlı finansal eğitim platformu.</p>
+    <div class="hero-actions">
+      <button class="btn-primary">Kursları Keşfet</button>
+      <button class="btn-ghost">▶ Tanıtım Videosu</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">142</div>
+        <div class="stat-label">Video Ders</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">18</div>
+        <div class="stat-label">Konu Kategorisi</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">4.8★</div>
+        <div class="stat-label">Ortalama Puan</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="market-card">
+      <div class="market-card-header">
+        <span class="market-title">Piyasa Özeti</span>
+        <span class="market-date">Canlı</span>
+      </div>
+      <div class="market-items">
+        <div class="market-item">
+          <span class="market-name">BIST 100</span>
+          <span class="market-price">9.847</span>
+          <span class="market-change up">+1.24%</span>
+        </div>
+        <div class="market-item">
+          <span class="market-name">USD/TRY</span>
+          <span class="market-price">32.84</span>
+          <span class="market-change down">-0.38%</span>
+        </div>
+        <div class="market-item">
+          <span class="market-name">Altın (gr)</span>
+          <span class="market-price">2.891</span>
+          <span class="market-change up">+0.72%</span>
+        </div>
+        <div class="market-item">
+          <span class="market-name">BTC/USD</span>
+          <span class="market-price">67.420</span>
+          <span class="market-change up">+3.15%</span>
+        </div>
+      </div>
+    </div>
+    <div class="mini-cards">
+      <div class="mini-card">
+        <div class="mini-card-label">Portfolyo Getirisi</div>
+        <div class="mini-card-value" style="color: var(--green)">+%24.6</div>
+        <div class="mini-card-sub">Bu yıl</div>
+      </div>
+      <div class="mini-card">
+        <div class="mini-card-label">Enflasyon Üzeri</div>
+        <div class="mini-card-value">+%8.2</div>
+        <div class="mini-card-sub">Reel getiri</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- KURSLAR -->
+<section>
+  <span class="section-label">Video Kütüphanesi</span>
+  <h2 class="section-title">Tüm Eğitimler</h2>
+  <p class="section-sub">Konuya göre filtreleyerek aradığınız eğitime ulaşın.</p>
+
+  <div class="search-bar">
+    <input class="search-input" type="text" id="searchInput" placeholder="Kurs veya konu ara..." oninput="filterVideos()">
+    <button class="search-btn">🔍</button>
+  </div>
+
+  <!-- FEATURED -->
+  <div class="featured-card">
+    <div>
+      <span class="featured-tag">⭐ Öne Çıkan Kurs</span>
+      <div class="featured-title">Portfolyo Yönetimi:<br>Sıfırdan İleri Seviyeye</div>
+      <div class="featured-desc">Modern portföy teorisinden pratik uygulamalara kadar 12 saatlik kapsamlı eğitim serisi. Risk yönetimi, varlık dağılımı ve rebalancing stratejilerini öğrenin.</div>
+      <div class="progress-row">
+        <span class="progress-label">%68 tamamlandı</span>
+        <div class="progress-bar"><div class="progress-fill" style="width: 68%"></div></div>
+        <span class="progress-label">8/12 ders</span>
+      </div>
+      <br>
+      <button class="featured-cta" onclick="openModal('Portfolyo Yönetimi: Sıfırdan İleri Seviyeye', 'Portfolyo Yönetimi', 'Modern portföy teorisinden pratik uygulamalara kadar kapsamlı eğitim serisi.', '🏦')">▶ Kaldığın Yerden Devam Et</button>
+    </div>
+    <div class="featured-thumb">🏦</div>
+  </div>
+
+  <!-- TABS -->
+  <div class="category-bar" id="categoryBar">
+    <button class="cat-tab active" onclick="filterByCategory('Tümü', this)">Tümü <span class="cat-count">12</span></button>
+    <button class="cat-tab" onclick="filterByCategory('Portfolyo Yönetimi', this)">Portfolyo Yönetimi <span class="cat-count">3</span></button>
+    <button class="cat-tab" onclick="filterByCategory('Teknik Analiz', this)">Teknik Analiz <span class="cat-count">3</span></button>
+    <button class="cat-tab" onclick="filterByCategory('Kripto', this)">Kripto Paralar <span class="cat-count">2</span></button>
+    <button class="cat-tab" onclick="filterByCategory('Hisse Senedi', this)">Hisse Senedi <span class="cat-count">2</span></button>
+    <button class="cat-tab" onclick="filterByCategory('Emeklilik', this)">Emeklilik Planlaması <span class="cat-count">2</span></button>
+  </div>
+
+  <!-- VIDEO GRID -->
+  <div class="video-grid" id="videoGrid">
+  </div>
+</section>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-video">
+      <span id="modalEmoji" style="position:relative;z-index:1">🎬</span>
+      <div class="modal-play-btn">
+        <div class="modal-play-circle">▶</div>
+        <div class="modal-play-label">Video oynatmak için tıklayın</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-cat" id="modalCat"></div>
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="modal-footer">
+        <button class="btn-primary" style="font-size:13px">📥 İndir</button>
+        <button class="btn-ghost" style="font-size:13px">📋 Notlar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">FinansAkademi</div>
+      <p class="footer-tagline">Türkiye'nin en kapsamlı finansal eğitim platformu. Geleceğinizi bugün inşa edin.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Kategoriler</div>
+      <ul class="footer-links">
+        <li><a href="#">Portfolyo Yönetimi</a></li>
+        <li><a href="#">Teknik Analiz</a></li>
+        <li><a href="#">Hisse Senedi</a></li>
+        <li><a href="#">Kripto Paralar</a></li>
+        <li><a href="#">Emeklilik</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Platform</div>
+      <ul class="footer-links">
+        <li><a href="#">Hakkımızda</a></li>
+        <li><a href="#">Eğitmenler</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">SSS</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Hesap</div>
+      <ul class="footer-links">
+        <li><a href="#">Kayıt Ol</a></li>
+        <li><a href="#">Giriş Yap</a></li>
+        <li><a href="#">Premium</a></li>
+        <li><a href="#">Destek</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 FinansAkademi. Tüm hakları saklıdır.</span>
+    <span class="footer-copy">Gizlilik · Kullanım Koşulları</span>
+  </div>
+</footer>
+
+<script>
+const videos = [
+  {
+    id: 1,
+    category: 'Portfolyo Yönetimi',
+    title: 'Modern Portföy Teorisi',
+    desc: 'Markowitz\'in MPT çerçevesini ve etkin sınır kavramını öğrenin.',
+    emoji: '📊',
+    bg: 'linear-gradient(135deg, #1a3a2a 0%, #2d6a4f 100%)',
+    duration: '38:24',
+    level: 'intermediate',
+    levelLabel: 'Orta',
+    instructor: 'Mehmet A.',
+    instructorColor: '#2d6a4f',
+    initials: 'MA',
+    views: '12.4K'
+  },
+  {
+    id: 2,
+    category: 'Teknik Analiz',
+    title: 'Mum Grafikleri ile Okuma',
+    desc: 'Japonca mum grafik formasyonlarını tanıyın ve alım-satım sinyallerini anlayın.',
+    emoji: '🕯️',
+    bg: 'linear-gradient(135deg, #2c1654 0%, #4a2080 100%)',
+    duration: '52:10',
+    level: 'beginner',
+    levelLabel: 'Başlangıç',
+    instructor: 'Ayşe K.',
+    instructorColor: '#7b2d8b',
+    initials: 'AK',
+    views: '28.1K'
+  },
+  {
+    id: 3,
+    category: 'Kripto',
+    title: 'Bitcoin ve Blockchain Temelleri',
+    desc: 'Kripto para ekosistemini, blockchain teknolojisini ve güvenli yatırım stratejilerini keşfedin.',
+    emoji: '₿',
+    bg: 'linear-gradient(135deg, #7d4e00 0%, #c9832c 100%)',
+    duration: '44:55',
+    level: 'beginner',
+    levelLabel: 'Başlangıç',
+    instructor: 'Can Ö.',
+    instructorColor: '#c9832c',
+    initials: 'CÖ',
+    views: '41.7K'
+  },
+  {
+    id: 4,
+    category: 'Hisse Senedi',
+    title: 'Temel Analiz: Şirket Değerleme',
+    desc: 'F/K oranı, PD/DD ve DCF modelleriyle hisse senedi değerleme metodolojileri.',
+    emoji: '🏢',
+    bg: 'linear-gradient(135deg, #0d2137 0%, #1a4a7a 100%)',
+    duration: '1:02:18',
+    level: 'intermediate',
+    levelLabel: 'Orta',
+    instructor: 'Selin D.',
+    instructorColor: '#1a4a7a',
+    initials: 'SD',
+    views: '9.8K'
+  },
+  {
+    id: 5,
+    category: 'Emeklilik',
+    title: 'BES ve Emeklilik Planlaması',
+    desc: 'Bireysel Emeklilik Sistemi avantajlarını ve uzun vadeli birikim stratejilerini öğrenin.',
+    emoji: '🏖️',
+    bg: 'linear-gradient(135deg, #1a3a4a 0%, #2a7090 100%)',
+    duration: '29:44',
+    level: 'beginner',
+    levelLabel: 'Başlangıç',
+    instructor: 'Fatma Y.',
+    instructorColor: '#2a7090',
+    initials: 'FY',
+    views: '7.2K'
+  },
+  {
+    id: 6,
+    category: 'Teknik Analiz',
+    title: 'RSI, MACD ve Osilatörler',
+    desc: 'Momentum göstergelerini kullanarak trend gücünü ve dönüş noktalarını tespit edin.',
+    emoji: '📈',
+    bg: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+    duration: '47:32',
+    level: 'advanced',
+    levelLabel: 'İleri',
+    instructor: 'Ahmet B.',
+    instructorColor: '#e94560',
+    initials: 'AB',
+    views: '15.3K'
+  },
+  {
+    id: 7,
+    category: 'Portfolyo Yönetimi',
+    title: 'Varlık Dağılımı Stratejileri',
+    desc: 'Hisse, tahvil, emtia ve alternatif yatırımları dengeleyen portföy kurma rehberi.',
+    emoji: '⚖️',
+    bg: 'linear-gradient(135deg, #2a1a0a 0%, #6b3a1a 100%)',
+    duration: '41:08',
+    level: 'intermediate',
+    levelLabel: 'Orta',
+    instructor: 'Mehmet A.',
+    instructorColor: '#2d6a4f',
+    initials: 'MA',
+    views: '11.0K'
+  },
+  {
+    id: 8,
+    category: 'Kripto',
+    title: 'DeFi ve Getiri Farming',
+    desc: 'Merkeziyetsiz finans protokollerinden nasıl pasif gelir elde edileceğini öğrenin.',
+    emoji: '⛓️',
+    bg: 'linear-gradient(135deg, #0a2a1a 0%, #1a6b3a 100%)',
+    duration: '58:20',
+    level: 'advanced',
+    levelLabel: 'İleri',
+    instructor: 'Can Ö.',
+    instructorColor: '#c9832c',
+    initials: 'CÖ',
+    views: '22.5K'
+  },
+  {
+    id: 9,
+    category: 'Hisse Senedi',
+    title: 'BIST\'te Temettü Yatırımı',
+    desc: 'Yüksek temettü verimine sahip hisseleri analiz etme ve portföye dahil etme yöntemleri.',
+    emoji: '💰',
+    bg: 'linear-gradient(135deg, #1a2a0a 0%, #4a6a1a 100%)',
+    duration: '35:14',
+    level: 'beginner',
+    levelLabel: 'Başlangıç',
+    instructor: 'Selin D.',
+    instructorColor: '#1a4a7a',
+    initials: 'SD',
+    views: '18.6K'
+  },
+  {
+    id: 10,
+    category: 'Teknik Analiz',
+    title: 'Destek ve Direnç Seviyeleri',
+    desc: 'Fiyat hareketlerindeki kritik seviyeleri tespit edin ve bu bilgiyi strateji geliştirmekte kullanın.',
+    emoji: '🎯',
+    bg: 'linear-gradient(135deg, #2a0a2a 0%, #6a1a6a 100%)',
+    duration: '33:50',
+    level: 'beginner',
+    levelLabel: 'Başlangıç',
+    instructor: 'Ayşe K.',
+    instructorColor: '#7b2d8b',
+    initials: 'AK',
+    views: '32.4K'
+  },
+  {
+    id: 11,
+    category: 'Portfolyo Yönetimi',
+    title: 'Risk Yönetimi ve Stop-Loss',
+    desc: 'Portföy riskini kontrol altına almak için pozisyon boyutlandırma ve stop-loss stratejileri.',
+    emoji: '🛡️',
+    bg: 'linear-gradient(135deg, #0a1a2a 0%, #1a3a5a 100%)',
+    duration: '49:05',
+    level: 'advanced',
+    levelLabel: 'İleri',
+    instructor: 'Mehmet A.',
+    instructorColor: '#2d6a4f',
+    initials: 'MA',
+    views: '8.9K'
+  },
+  {
+    id: 12,
+    category: 'Emeklilik',
+    title: 'Enflasyona Karşı Korunma',
+    desc: 'Uzun vadede satın alma gücünüzü koruyacak enflasyona karşı hedge stratejileri.',
+    emoji: '🏅',
+    bg: 'linear-gradient(135deg, #2a1a0a 0%, #7a5a1a 100%)',
+    duration: '26:38',
+    level: 'intermediate',
+    levelLabel: 'Orta',
+    instructor: 'Fatma Y.',
+    instructorColor: '#2a7090',
+    initials: 'FY',
+    views: '5.6K'
+  }
+];
+
+let currentCategory = 'Tümü';
+let currentSearch = '';
+
+function getLevelClass(level) {
+  return { beginner: 'level-beginner', intermediate: 'level-intermediate', advanced: 'level-advanced' }[level] || '';
+}
+
+function renderVideos() {
+  const grid = document.getElementById('videoGrid');
+  const filtered = videos.filter(v => {
+    const matchCat = currentCategory === 'Tümü' || v.category === currentCategory;
+    const matchSearch = !currentSearch || v.title.toLowerCase().includes(currentSearch.toLowerCase()) || v.category.toLowerCase().includes(currentSearch.toLowerCase());
+    return matchCat && matchSearch;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)"><div style="font-size:40px;margin-bottom:12px">🔍</div><div style="font-family:\'Playfair Display\',serif;font-size:20px">Sonuç bulunamadı</div><div style="font-size:14px;margin-top:8px">Farklı bir arama terimi deneyin</div></div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map((v, i) => `
+    <div class="video-card" style="animation-delay:${i * 0.06}s" onclick="openModal('${v.title}', '${v.category}', '${v.desc}', '${v.emoji}')">
+      <div class="video-thumb">
+        <div class="thumb-bg" style="background:${v.bg}">${v.emoji}</div>
+        <div class="play-btn"><div class="play-circle">▶</div></div>
+        <span class="video-duration">${v.duration}</span>
+        <span class="video-level ${getLevelClass(v.level)}">${v.levelLabel}</span>
+      </div>
+      <div class="video-body">
+        <div class="video-category">${v.category}</div>
+        <div class="video-title">${v.title}</div>
+        <div class="video-desc">${v.desc}</div>
+        <div class="video-meta">
+          <div class="instructor">
+            <div class="instructor-avatar" style="background:${v.instructorColor}">${v.initials}</div>
+            <span class="instructor-name">${v.instructor}</span>
+          </div>
+          <span class="video-views">👁 ${v.views}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterByCategory(cat, btn) {
+  currentCategory = cat;
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderVideos();
+}
+
+function filterVideos() {
+  currentSearch = document.getElementById('searchInput').value;
+  renderVideos();
+}
+
+function openModal(title, cat, desc, emoji) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalCat').textContent = cat;
+  document.getElementById('modalDesc').textContent = desc;
+  document.getElementById('modalEmoji').textContent = emoji;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+renderVideos();
+</script>
+</body>
+</html>
