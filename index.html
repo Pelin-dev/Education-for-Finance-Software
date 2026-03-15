@@ -917,7 +917,7 @@
     <li><a href="#">Portfolyo</a></li>
     <li><a href="#">Araçlar</a></li>
     <li><a href="#">Blog</a></li>
-    <li><a href="#" class="nav-cta">Ücretsiz Başla</a></li>
+    <a href="#" class="nav-cta" onclick="openAuth()">Ücretsiz Başla</a>
   </ul>
 </nav>
 
@@ -1291,7 +1291,90 @@ let currentSearch = '';
 function getLevelClass(level) {
   return { beginner: 'level-beginner', intermediate: 'level-intermediate', advanced: 'level-advanced' }[level] || '';
 }
+const API = 'http://localhost:5000/api';
+let currentTab = 'login';
 
+function openAuth() {
+  document.getElementById('authModal').style.display = 'flex';
+}
+
+function closeAuth() {
+  document.getElementById('authModal').style.display = 'none';
+  document.getElementById('authMsg').style.display = 'none';
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('nameField').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('authSubmitBtn').textContent = tab === 'login' ? 'Giriş Yap' : 'Kayıt Ol';
+  document.getElementById('tabLogin').style.borderBottomColor = tab === 'login' ? '#c9a84c' : 'transparent';
+  document.getElementById('tabLogin').style.color = tab === 'login' ? '#0d0d0d' : '#6b6457';
+  document.getElementById('tabRegister').style.borderBottomColor = tab === 'register' ? '#c9a84c' : 'transparent';
+  document.getElementById('tabRegister').style.color = tab === 'register' ? '#0d0d0d' : '#6b6457';
+}
+
+async function handleAuth(e) {
+  e.preventDefault();
+  const email = document.getElementById('authEmail').value;
+  const password = document.getElementById('authPassword').value;
+  const btn = document.getElementById('authSubmitBtn');
+  const msg = document.getElementById('authMsg');
+  
+  btn.textContent = 'Yükleniyor...';
+  btn.disabled = true;
+
+  try {
+    const body = currentTab === 'register' 
+      ? { name: document.getElementById('authName').value, email, password }
+      : { email, password };
+
+    const res = await fetch(`${API}/auth/${currentTab}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      msg.style.display = 'block';
+      msg.style.background = '#fde8e8';
+      msg.style.color = '#c0392b';
+      msg.textContent = data.msg || 'Bir hata oluştu';
+    } else {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      closeAuth();
+      updateNavUser(data.user);
+    }
+  } catch(err) {
+    msg.style.display = 'block';
+    msg.style.background = '#fde8e8';
+    msg.style.color = '#c0392b';
+    msg.textContent = 'Sunucuya bağlanılamadı';
+  }
+
+  btn.textContent = currentTab === 'login' ? 'Giriş Yap' : 'Kayıt Ol';
+  btn.disabled = false;
+}
+
+function updateNavUser(user) {
+  const cta = document.querySelector('.nav-cta');
+  if (cta) {
+    cta.textContent = user.name;
+    cta.onclick = logout;
+  }
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  location.reload();
+}
+
+// Sayfa açılınca kullanıcı varsa göster
+const savedUser = localStorage.getItem('user');
+if (savedUser) updateNavUser(JSON.parse(savedUser));
 function renderVideos() {
   const grid = document.getElementById('videoGrid');
   const filtered = videos.filter(v => {
@@ -1363,5 +1446,34 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
 
 renderVideos();
 </script>
+<!-- AUTH MODAL -->
+<div id="authModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+  <div style="background:#f8f5ef;border-radius:8px;width:90%;max-width:420px;padding:40px;position:relative">
+    <button onclick="closeAuth()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#6b6457">✕</button>
+    
+    <div id="authTabs" style="display:flex;gap:0;border-bottom:1px solid #d4cec4;margin-bottom:28px">
+      <button id="tabLogin" onclick="switchTab('login')" style="flex:1;padding:12px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:#0d0d0d;border-bottom:2px solid #c9a84c;cursor:pointer">Giriş Yap</button>
+      <button id="tabRegister" onclick="switchTab('register')" style="flex:1;padding:12px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:#6b6457;border-bottom:2px solid transparent;cursor:pointer">Kayıt Ol</button>
+    </div>
+
+    <div id="authMsg" style="display:none;padding:10px 14px;border-radius:4px;font-size:13px;margin-bottom:16px"></div>
+
+    <form onsubmit="handleAuth(event)">
+      <div id="nameField" style="display:none;margin-bottom:16px">
+        <label style="font-size:12px;font-weight:600;color:#6b6457;letter-spacing:0.5px;text-transform:uppercase;display:block;margin-bottom:6px">Ad Soyad</label>
+        <input id="authName" type="text" placeholder="Adınız" style="width:100%;padding:12px 14px;border:1px solid #d4cec4;border-radius:3px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:white">
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:12px;font-weight:600;color:#6b6457;letter-spacing:0.5px;text-transform:uppercase;display:block;margin-bottom:6px">Email</label>
+        <input id="authEmail" type="email" placeholder="email@example.com" style="width:100%;padding:12px 14px;border:1px solid #d4cec4;border-radius:3px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:white">
+      </div>
+      <div style="margin-bottom:24px">
+        <label style="font-size:12px;font-weight:600;color:#6b6457;letter-spacing:0.5px;text-transform:uppercase;display:block;margin-bottom:6px">Şifre</label>
+        <input id="authPassword" type="password" placeholder="••••••••" style="width:100%;padding:12px 14px;border:1px solid #d4cec4;border-radius:3px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:white">
+      </div>
+      <button type="submit" id="authSubmitBtn" style="width:100%;padding:14px;background:#0d0d0d;color:#f8f5ef;border:none;border-radius:2px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">Giriş Yap</button>
+    </form>
+  </div>
+</div>
 </body>
 </html>

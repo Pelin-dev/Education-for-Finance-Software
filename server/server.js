@@ -13,7 +13,10 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/auth'));
 
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, {
+  serverSelectionTimeoutMS: 10000,
+  family: 4
+})
   .then(() => console.log('MongoDB bağlandı ✅'))
   .catch(err => console.log('MongoDB hatası:', err));
 
