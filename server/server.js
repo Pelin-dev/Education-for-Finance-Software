@@ -11,7 +11,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
-
+app.use('/api/videos', require('./routes/videos'));
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {
   serverSelectionTimeoutMS: 10000,
