@@ -23,7 +23,7 @@ router.post('/register', async (req, res) => {
     // Token oluştur
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
+  res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
   } catch (err) {
     res.status(500).json({ msg: 'Sunucu hatası' });
   }
@@ -45,7 +45,7 @@ router.post('/login', async (req, res) => {
     // Token oluştur
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
+  res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
   } catch (err) {
     res.status(500).json({ msg: 'Sunucu hatası' });
   }
