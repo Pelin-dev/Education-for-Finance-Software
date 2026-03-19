@@ -1344,8 +1344,12 @@ async function handleAuth(e) {
     } else {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      closeAuth();
-      updateNavUser(data.user);
+     if (data.user.role === 'admin') {
+  window.location.href = '/admin.html';
+} else {
+  closeAuth();
+  updateNavUser(data.user);
+}
     }
   } catch(err) {
     msg.style.display = 'block';

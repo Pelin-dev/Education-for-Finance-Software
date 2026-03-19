@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinansAkademi — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #0d0d0d; --paper: #f8f5ef; --cream: #ede9e0;
+    --gold: #c9a84c; --border: #d4cec4; --muted: #6b6457;
+    --green: #1a7a4a; --red: #c0392b;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: #0d0d0d; color: #f8f5ef; min-height: 100vh; }
+
+  /* LOGIN */
+  #loginScreen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; background: #0d0d0d;
+  }
+  .login-box {
+    background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px;
+    padding: 48px; width: 100%; max-width: 400px;
+  }
+  .login-logo { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 900; color: var(--gold); margin-bottom: 8px; }
+  .login-sub { font-size: 13px; color: #666; margin-bottom: 32px; }
+  .login-box label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #888; display: block; margin-bottom: 6px; }
+  .login-box input {
+    width: 100%; padding: 12px 14px; background: #111; border: 1px solid #333;
+    border-radius: 3px; color: #f8f5ef; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; outline: none; margin-bottom: 16px; transition: border-color 0.2s;
+  }
+  .login-box input:focus { border-color: var(--gold); }
+  .login-btn {
+    width: 100%; padding: 13px; background: var(--gold); color: #0d0d0d;
+    border: none; border-radius: 3px; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+  }
+  .login-btn:hover { opacity: 0.85; }
+  .login-err { font-size: 13px; color: #e74c3c; margin-bottom: 16px; display: none; }
+
+  /* DASHBOARD */
+  #dashboard { display: none; }
+
+  nav {
+    background: #111; border-bottom: 1px solid #222;
+    padding: 16px 32px; display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-brand { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 900; color: var(--gold); }
+  .nav-brand span { font-size: 12px; font-weight: 400; color: #555; font-family: 'DM Sans', sans-serif; margin-left: 8px; }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-user { font-size: 13px; color: #666; }
+  .logout-btn {
+    padding: 8px 16px; background: none; border: 1px solid #333;
+    color: #888; border-radius: 3px; font-size: 12px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; transition: border-color 0.2s, color 0.2s;
+  }
+  .logout-btn:hover { border-color: #e74c3c; color: #e74c3c; }
+
+  .main { max-width: 1200px; margin: 0 auto; padding: 40px 32px; }
+
+  /* STATS */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; }
+  .stat-card { background: #111; border: 1px solid #222; border-radius: 6px; padding: 24px; }
+  .stat-card-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #555; margin-bottom: 8px; }
+  .stat-card-num { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; color: var(--gold); }
+  .stat-card-sub { font-size: 12px; color: #444; margin-top: 4px; }
+
+  /* SECTION */
+  .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; }
+  .add-btn {
+    padding: 10px 20px; background: var(--gold); color: #0d0d0d;
+    border: none; border-radius: 3px; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+  }
+  .add-btn:hover { opacity: 0.85; }
+
+  /* TABLE */
+  .table-wrap { background: #111; border: 1px solid #222; border-radius: 6px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: #1a1a1a; }
+  th { padding: 14px 20px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #555; border-bottom: 1px solid #222; }
+  td { padding: 16px 20px; font-size: 13px; color: #ccc; border-bottom: 1px solid #1a1a1a; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #151515; }
+
+  .badge {
+    font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 2px;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .badge-beginner { background: rgba(26,122,74,0.2); color: #4ade80; }
+  .badge-intermediate { background: rgba(201,168,76,0.2); color: var(--gold); }
+  .badge-advanced { background: rgba(192,57,43,0.2); color: #f87171; }
+
+  .action-btns { display: flex; gap: 8px; }
+  .edit-btn, .del-btn {
+    padding: 6px 12px; border-radius: 3px; font-size: 12px; font-weight: 600;
+    cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; transition: opacity 0.2s;
+  }
+  .edit-btn { background: #1a2a3a; color: #60a5fa; }
+  .edit-btn:hover { opacity: 0.8; }
+  .del-btn { background: #2a1a1a; color: #f87171; }
+  .del-btn:hover { opacity: 0.8; }
+
+  .empty-state { text-align: center; padding: 60px; color: #444; }
+  .empty-state-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state-text { font-size: 15px; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8); z-index: 200;
+    align-items: center; justify-content: center; backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #111; border: 1px solid #222; border-radius: 8px;
+    width: 90%; max-width: 560px; padding: 36px;
+    animation: modalIn 0.2s ease;
+  }
+  @keyframes modalIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; margin-bottom: 24px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #666; }
+  .form-group input, .form-group select, .form-group textarea {
+    padding: 11px 14px; background: #1a1a1a; border: 1px solid #2a2a2a;
+    border-radius: 3px; color: #f8f5ef; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; outline: none; transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); }
+  .form-group select option { background: #1a1a1a; }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+  .modal-footer { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+  .cancel-btn {
+    padding: 10px 20px; background: none; border: 1px solid #333;
+    color: #888; border-radius: 3px; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; cursor: pointer; transition: border-color 0.2s;
+  }
+  .cancel-btn:hover { border-color: #555; color: #ccc; }
+  .save-btn {
+    padding: 10px 24px; background: var(--gold); color: #0d0d0d;
+    border: none; border-radius: 3px; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+  }
+  .save-btn:hover { opacity: 0.85; }
+
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; background: #1a7a4a;
+    color: white; padding: 12px 20px; border-radius: 4px; font-size: 13px;
+    font-weight: 500; z-index: 300; opacity: 0; transform: translateY(8px);
+    transition: opacity 0.3s, transform 0.3s; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { background: #c0392b; }
+
+  @media (max-width: 768px) {
+    .stats { grid-template-columns: 1fr 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .main { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">FinansAkademi</div>
+    <div class="login-sub">Admin Paneli — Yetkili Giriş</div>
+    <div class="login-err" id="loginErr"></div>
+    <label>Email</label>
+    <input type="email" id="loginEmail" placeholder="admin@example.com">
+    <label>Şifre</label>
+    <input type="password" id="loginPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="login-btn" onclick="doLogin()">Giriş Yap</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <nav>
+    <div class="nav-brand">FinansAkademi <span>Admin Panel</span></div>
+    <div class="nav-right">
+      <span class="nav-user" id="navUser"></span>
+      <button class="logout-btn" onclick="doLogout()">Çıkış</button>
+    </div>
+  </nav>
+
+  <div class="main">
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-card-label">Toplam Video</div>
+        <div class="stat-card-num" id="statVideos">0</div>
+        <div class="stat-card-sub">Yüklenen ders</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Kategoriler</div>
+        <div class="stat-card-num" id="statCats">0</div>
+        <div class="stat-card-sub">Farklı konu</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Başlangıç</div>
+        <div class="stat-card-num" id="statBeginner">0</div>
+        <div class="stat-card-sub">Video</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">İleri Seviye</div>
+        <div class="stat-card-num" id="statAdvanced">0</div>
+        <div class="stat-card-sub">Video</div>
+      </div>
+    </div>
+
+    <!-- VIDEO LIST -->
+    <div class="section-header">
+      <div class="section-title">Videolar</div>
+      <button class="add-btn" onclick="openModal()">+ Video Ekle</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Başlık</th>
+            <th>Kategori</th>
+            <th>Seviye</th>
+            <th>Süre</th>
+            <th>Tarih</th>
+            <th>İşlem</th>
+          </tr>
+        </thead>
+        <tbody id="videoTable">
+          <tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">🎬</div><div class="empty-state-text">Henüz video yok</div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- VIDEO MODAL -->
+<div class="modal-overlay" id="videoModal">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Video Ekle</div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Başlık</label>
+        <input type="text" id="fTitle" placeholder="Video başlığı">
+      </div>
+      <div class="form-group full">
+        <label>YouTube URL</label>
+        <input type="text" id="fUrl" placeholder="https://youtube.com/watch?v=...">
+      </div>
+      <div class="form-group full">
+        <label>Açıklama</label>
+        <textarea id="fDesc" placeholder="Video hakkında kısa açıklama..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Kategori</label>
+        <select id="fCat">
+          <option value="Portfolyo Yönetimi">Portfolyo Yönetimi</option>
+          <option value="Teknik Analiz">Teknik Analiz</option>
+          <option value="Kripto">Kripto Paralar</option>
+          <option value="Hisse Senedi">Hisse Senedi</option>
+          <option value="Emeklilik">Emeklilik Planlaması</option>
+          <option value="Temel Analiz">Temel Analiz</option>
+          <option value="Döviz">Döviz & Forex</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Seviye</label>
+        <select id="fLevel">
+          <option value="beginner">Başlangıç</option>
+          <option value="intermediate">Orta</option>
+          <option value="advanced">İleri</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Süre (örn: 42:30)</label>
+        <input type="text" id="fDuration" placeholder="00:00">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="cancel-btn" onclick="closeModal()">İptal</button>
+      <button class="save-btn" onclick="saveVideo()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'https://education-for-finance-software-production.up.railway.app/api';
+let token = localStorage.getItem('adminToken');
+let editingId = null;
+let videos = [];
+
+// AUTO LOGIN CHECK
+if (token) checkAdmin();
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  const err = document.getElementById('loginErr');
+
+  try {
+    const res = await fetch(`${API}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+
+    if (!res.ok) { err.style.display = 'block'; err.textContent = data.msg; return; }
+    if (data.user.role !== 'admin') { err.style.display = 'block'; err.textContent = 'Admin yetkisi yok!'; return; }
+
+    token = data.token;
+    localStorage.setItem('adminToken', token);
+    localStorage.setItem('adminUser', JSON.stringify(data.user));
+    showDashboard(data.user);
+  } catch {
+    err.style.display = 'block';
+    err.textContent = 'Sunucuya bağlanılamadı';
+  }
+}
+
+async function checkAdmin() {
+  const user = JSON.parse(localStorage.getItem('adminUser') || '{}');
+  if (user.role === 'admin') showDashboard(user);
+}
+
+function showDashboard(user) {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('navUser').textContent = user.name;
+  loadVideos();
+}
+
+function doLogout() {
+  localStorage.removeItem('adminToken');
+  localStorage.removeItem('adminUser');
+  token = null;
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+}
+
+async function loadVideos() {
+  try {
+    const res = await fetch(`${API}/videos`);
+    videos = await res.json();
+    renderTable();
+    updateStats();
+  } catch {
+    showToast('Videolar yüklenemedi', true);
+  }
+}
+
+function renderTable() {
+  const tbody = document.getElementById('videoTable');
+  if (videos.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">🎬</div><div class="empty-state-text">Henüz video yok — Video Ekle butonuna tıkla</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = videos.map(v => `
+    <tr>
+      <td><strong style="color:#f8f5ef">${v.title}</strong></td>
+      <td style="color:#888">${v.category}</td>
+      <td><span class="badge badge-${v.level}">${v.level === 'beginner' ? 'Başlangıç' : v.level === 'intermediate' ? 'Orta' : 'İleri'}</span></td>
+      <td style="color:#888">${v.duration || '—'}</td>
+      <td style="color:#555">${new Date(v.createdAt).toLocaleDateString('tr-TR')}</td>
+      <td>
+        <div class="action-btns">
+          <button class="edit-btn" onclick="editVideo('${v._id}')">Düzenle</button>
+          <button class="del-btn" onclick="deleteVideo('${v._id}')">Sil</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function updateStats() {
+  document.getElementById('statVideos').textContent = videos.length;
+  document.getElementById('statCats').textContent = [...new Set(videos.map(v => v.category))].length;
+  document.getElementById('statBeginner').textContent = videos.filter(v => v.level === 'beginner').length;
+  document.getElementById('statAdvanced').textContent = videos.filter(v => v.level === 'advanced').length;
+}
+
+function openModal(id = null) {
+  editingId = id;
+  document.getElementById('modalTitle').textContent = id ? 'Video Düzenle' : 'Video Ekle';
+  if (id) {
+    const v = videos.find(v => v._id === id);
+    document.getElementById('fTitle').value = v.title;
+    document.getElementById('fUrl').value = v.youtubeUrl;
+    document.getElementById('fDesc').value = v.description || '';
+    document.getElementById('fCat').value = v.category;
+    document.getElementById('fLevel').value = v.level;
+    document.getElementById('fDuration').value = v.duration || '';
+  } else {
+    document.getElementById('fTitle').value = '';
+    document.getElementById('fUrl').value = '';
+    document.getElementById('fDesc').value = '';
+    document.getElementById('fCat').value = 'Portfolyo Yönetimi';
+    document.getElementById('fLevel').value = 'beginner';
+    document.getElementById('fDuration').value = '';
+  }
+  document.getElementById('videoModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('videoModal').classList.remove('open');
+  editingId = null;
+}
+
+function editVideo(id) { openModal(id); }
+
+async function saveVideo() {
+  const body = {
+    title: document.getElementById('fTitle').value,
+    youtubeUrl: document.getElementById('fUrl').value,
+    description: document.getElementById('fDesc').value,
+    category: document.getElementById('fCat').value,
+    level: document.getElementById('fLevel').value,
+    duration: document.getElementById('fDuration').value,
+  };
+
+  if (!body.title || !body.youtubeUrl) { showToast('Başlık ve URL zorunlu!', true); return; }
+
+  try {
+    const url = editingId ? `${API}/videos/${editingId}` : `${API}/videos`;
+    const method = editingId ? 'PUT' : 'POST';
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error();
+    closeModal();
+    loadVideos();
+    showToast(editingId ? 'Video güncellendi ✅' : 'Video eklendi ✅');
+  } catch {
+    showToast('Bir hata oluştu', true);
+  }
+}
+
+async function deleteVideo(id) {
+  if (!confirm('Bu videoyu silmek istediğine emin misin?')) return;
+  try {
+    await fetch(`${API}/videos/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    loadVideos();
+    showToast('Video silindi');
+  } catch {
+    showToast('Silinemedi', true);
+  }
+}
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+document.getElementById('videoModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('videoModal')) closeModal();
+});
+</script>
+</body>
+</html>
