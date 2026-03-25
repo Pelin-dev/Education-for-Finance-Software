@@ -6,23 +6,30 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const app = express();
-app.use(cors({
-    origin: '*', // Şimdilik tüm sitelerden gelen isteklere izin ver
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
+
+// Tüm kapıları sonuna kadar açan CORS
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
-// Routes
+// 🟢 CAN DAMARI TESTİ: Bu rotaya girince sunucunun yaşayıp yaşamadığını göreceğiz
+app.get('/', (req, res) => {
+    res.send('Tebrikler Pelin! Backend tıkır tıkır çalışıyor 🚀');
+});
+
+// Rotalar
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/videos', require('./routes/videos'));
-// MongoDB connection
+
+// MongoDB Bağlantısı (Hata verse bile sunucuyu çökertmemesi için özel ayarlandı)
 mongoose.connect(process.env.MONGO_URI, {
   serverSelectionTimeoutMS: 10000,
   family: 4
 })
   .then(() => console.log('MongoDB bağlandı ✅'))
-  .catch(err => console.log('MongoDB hatası:', err));
+  .catch(err => console.error('MongoDB BAĞLANTI HATASI:', err));
 
+// Port Dinleme (Railway için 0.0.0.0 zorunluluğu)
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, '0.0.0.0', () => console.log(`Sunucu ${PORT} portunda çalışıyor 🚀`));
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Sunucu ${PORT} portunda başarıyla ayağa kalktı 🚀`);
+});
