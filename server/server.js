@@ -6,7 +6,11 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const app = express();
-app.use(cors()); // En basit ve geniş izin hali
+app.use(cors({
+    origin: '*', // Şimdilik tüm sitelerden gelen isteklere izin ver
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // Routes
