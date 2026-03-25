@@ -13,7 +13,7 @@ app.use(express.json());
 
 // 🟢 CAN DAMARI TESTİ: Bu rotaya girince sunucunun yaşayıp yaşamadığını göreceğiz
 app.get('/', (req, res) => {
-    res.send('Tebrikler Pelin! Backend tıkır tıkır çalışıyor 🚀');
+    res.send('Backend works🚀');
 });
 
 // Rotalar
